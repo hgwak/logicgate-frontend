@@ -37,7 +37,46 @@ export class MainComponent implements OnInit {
   // "A" to "z".
   public getAnimalsByClass(animals: IStringMap<Animal[]>): IStringMap<Animal[]> {
     // Add your code here.
+    //used let to transform array
+    let animalArray: Animal[] = [];
+    const animalsByClass: IStringMap<Animal[]> = {};
+    // brute force method
+    // Loops through continents to create a new array of animals
+    // using two loops to avoid O(n^2)
+    for (const continent in animals) {
+      animalArray = [...animalArray, ...animals[continent]]
+    }
+    // learned something new
+    // filtered duplicates
+    // sorting now to avoid multiple loops later
+    animalArray = [...new Map(animalArray.map(v => [v.id, v])).values()].sort((a: Animal, b: Animal)=>{
+      return a.name.localeCompare(b.name);
+    });
+    // loop through animals and organize by class,
+    // if class does not exist within animalsByClass, then add new category
+    for (let i = 0; i < animalArray.length; i++) {
+      const animal = animalArray[i];
+      const animalClass = animalArray[i].class;
+      if (!animalsByClass[animalClass]) {
+        animalsByClass[animalClass] = [animal];
+      } else {
+        animalsByClass[animalClass].push(animal)
+      }
+    }
     // Run `ng test` to see if your code passes.
-    return {};
+    return animalsByClass;
+    // I used a basic brute force method to solve the challenge.
+    // I did make an effort to avoid any O(n^2) by separating the loops when necessary,
+    // especially with regards to sorting and removing duplicates.
+    // This challenge was fun because I found a new way to remove duplicate objects using Map!
+    // I think the trade-off with using multiple loops is that I may be looping through the arrays too many times,
+    // and with additional time I would try and find a way to reduce the amount of loops while still avoiding O(n^2).
+
+    // My general coding breakdown was: first get a list of all animals into a singular array,
+    // then remove any duplicate animals, then sort all of the animals in the array here,
+    // to avoid having to sort multiple times later since we are going to be looping through this array anyway.
+    // The final step was to create a new animalsByClass object, detect if that class already exists or not, then add the animals to the appropriate key through a loop.
+    // Due to using the Map method of removing duplicates I had to separate the sort method, but I would probably try and find some way to reduce the amount of loops I was using if I had more time.
+
   }
 }
